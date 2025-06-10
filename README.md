@@ -119,7 +119,7 @@ The code generates a raster for each year, with the following values. Users can 
   - FACTS_CommonAttribute_reduceCols_master
     - shapefile containing the FACTS data
     - see “Input data” section for more details
-- Don’t change the folder names on lines 32-40
+- Don’t change the folder names on lines 31-39
 
 ## Set up your command prompt in windows
 - Type “cmd” into your windows search bar and open “command prompt”
