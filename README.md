@@ -16,41 +16,55 @@ The code is written as 13 python scripts. The “master.py” script should be t
 ## Output
 The code generates a raster for each year, with the following values. Users can decide how they want to consolidate the data, depending on their needs and research questions
 
+Any variable that ranges across multiple values is indicated by "*", where the start of the range corresponds to an MMI value of 0 and the top of the range corresponds to an MMI value of 100. Note that MMI cannot logically be mapped to post-fire fuel management or salvage because it would be difficult to differentiate MMI change between post-fire effects and fuel management / salvage effects
+
 - 5000 = high severity fire
-- 4000 = low/mod severity fire
-- 3175 = post-high severity fire salvage
-  - 1-3 years post-fire
-  - note this is in USFS only, associated with FACTS activity codes 3132, 4231, and 4232
-  - ALSO NOTE that fire takes precedence over this code for the year of the fire, but because of the 4-year temporal span of FACTS polygons, these will show up the year after the fire whether they were completed the year of the fire or the year after
-- 3150 = post-high severity fire fuel management 
-  - 1-3 years post-fire
-  - note this is in USFS only
-  - note that these pixels might have been salvaged
-- 3100 = recently burned at high severity
-  - 1-3 years post-fire
-- 3075 = post-low/moderate sev fire salvage 
-  - 1-3 years post-fire
-  - note this is in USFS only, associated with FACTS activity codes 3132, 4231, and 4232
-- 3050 = post-low/moderate sev fire fuel management 
-  - 1-3 years post-fire
-  - note this is in USFS only
-  - note that these pixels might have been salvaged
-- 3000 = recently burned at low/moderate severity 
-  - 1-3 years post-fire
-- 2000 = non-USFS
-- 475 = salvage without fire 
-  - associated with FACTS activity codes 3132, 4231, and 4232
-  - shouldn't be much in this category, but this would happen anytime the completion date is on or one year after the date of the fire, due to the 4-year temporal span on fuel management polygons (2 years before to one year after the completion year)
-  - likely some before / after fire, but should be fire sometime nearby!
-- 300-400 = fuel management 
-  - 300 corresponds to an MMI value of 0 within a fuel management polygon 
-  - 400 corresponds to an MMI value of 100
-  - Note that these pixels definitely were NOT salvaged
-- 100-200 = drought 
-  - 100 corresponds to an MMI value of 0 where there is no fire or fuel management 
-  - 200 corresponds to an MMI value of 100
-  - Only generated for years where MMI exists
-- 0 = nothing
+- 4500 = mod severity fire
+- 4000 = low severity fire
+- 3500 = post-high severity fire salvage
+    - 1-3 years post-fire
+    - note this is in USFS only, associated with FACTS activity codes 3132, 4231, and 4232
+    - ALSO NOTE that fire takes precedence over this code for the year of the fire, but because of the 4-year temporal span of FACTS polygons, these will show up the year after the fire whether they were completed the year of the fire or the year after
+- 3300 = post-high severity fire fuel management
+    - 1-3 years post-fire
+    - note this is in USFS only
+    - note that these pixels might have been salvaged
+- 3000 = recently burned at high severity
+    - 1-3 years post-fire
+- 2500 = post-mod severity fire salvage
+    - 1-3 years post-fire
+    - note this is in USFS only, associated with FACTS activity codes 3132, 4231, and 4232
+    - ALSO NOTE that fire takes precedence over this code for the year of the fire, but because of the 4-year temporal span of FACTS polygons, these will show up the year after the fire whether they were completed the year of the fire or the year after
+- 2300 = post-mod severity fire fuel management
+    - 1-3 years post-fire
+    - note this is in USFS only
+    - note that these pixels might have been salvaged
+- 2000 = recently burned at mod severity
+    - 1-3 years post-fire
+- 1500 = post-low severity fire salvage
+    - 1-3 years post-fire
+    - note this is in USFS only, associated with FACTS activity codes 3132, 4231, and 4232
+    - ALSO NOTE that fire takes precedence over this code for the year of the fire, but because of the 4-year temporal span of FACTS polygons, these will show up the year after the fire whether they were completed the year of the fire or the year after
+- 1300 = post-low severity fire fuel management
+    - 1-3 years post-fire
+    - note this is in USFS only
+    - note that these pixels might have been salvaged
+- 1000 = recently burned at low severity
+    - 1-3 years post-fire
+-	999 = non-USFS
+-	500-600* = salvage without fire
+    -	associated with FACTS activity codes 3132, 4231, and 4232
+    -	shouldn't be much in this category, but this would happen anytime the completion date is on or one year after the date of the fire, due to the 4-year temporal span on fuel management polygons (2 years before to one year after the completion year)
+    -	likely some before / after fire, but should be fire sometime nearby!
+-	300-400* = fuel management
+    -	300 corresponds to an MMI value of 0 within a fuel management polygon
+    -	400 corresponds to an MMI value of 100
+    -	Note that these pixels definitely were NOT salvaged
+-	100-200* = drought/other
+    -	100 corresponds to an MMI value of 0 where there is no fire or fuel management or salvage
+    -	200 corresponds to an MMI value of 100
+    -	Only generated for years where MMI exists
+-	0 = nothing
 
 
 ## Prep to run
