@@ -213,26 +213,31 @@ Also note that much of this documentation is repeated as comments in the code it
   - assign 2 years before to 1 year after YR_FINAL (multi-year_ YrFINAL_yyyy.tif)
     - so if making an annual raster for FACTS in 2013, include YrFINAL from year-1 to +2 (e.g. 2012-2015)
   - Remove non_usfs (usfs_final.tif * multi-year_ YrFINAL_yyyy.tif = multi-year_ YrFINAL_yyyy_usfs.tif)
-- FINAL1_compile_annual_disturbance
+- 7_compile_annual_disturbance
   - TIME: 3 min
   - Mosaic (MAXIMUM) = disturbance_yyyy.tif
     - hiSev fire = 5000
-    - low/mod fire = 4000 
-    - post hisev salvage = 3175
-    - post hisev fuel management = 3150
-    - recent burn (1-3 years post-fire) hisev = 3100
-    - recent burn (1-3 years post-fire) salvage = 3075
-    - recent burn (1-3 years post-fire) fuel management = 3050
-    - recent burn (1-3 years post-fire) anysev = 3000
+    - mod sev fire = 4500
+    - low sev fire = 4000 
+    - post-HiSev fire salvage = 3500 (note this is in USFS only, associated with codes 3132, 4231, and 4232)
+    - post-HiSev fire treat = 3300 (note this is in USFS only)
+    - recently burned at high severity (1-3 years post-fire) = 3000
+    - post-ModSev fire salvage = 2500 (note this is in USFS only, associated with codes 3132, 4231, and 4232)
+    - post-ModSev fire treat = 2300 (note this is in USFS only)
+    - recently burned at mod severity (1-3 years post-fire) = 2000
+    - post-LowSev fire salvage = 1500 (note this is in USFS only, associated with codes 3132, 4231, and 4232)
+    - post-LowSev fire treat = 1300 (note this is in USFS only)
+    - recently burned at low severity (1-3 years post-fire) = 1000
     - non-USFS = 2000
-    - salvage (without fire in current or preceding 3 years) = 475
-    - fuel management (without fire in current or preceding 3 years) = 300-400, where 300 corresponds to an MMI value of 0 within a treatment polygon and 400 corresponds to an MMI value of 100
+    - 
+    - salvage without fire = 500-600, shouldn't be much in this category, but need to investigate!...likely some before fire and some after fire, but should be fire sometime nearby!
+    - fuel management = 300-400, where 300 corresponds to an MMI value of 0 within a treatment polygon and 400 corresponds to an MMI value of 100
     - drought = 100-200, where 100 corresponds to an MMI value of 0 where there is no fire or fuel management and 200 corresponds to an MMI value of 100
     - nothing = 0
-- FINAL2_compile_annual_single_rasters
+- 8_compile_annual_single_rasters
   - TIME: 3 min
   - once make single disturbance raster (FINAL_1_folder/Disturbance/disturbance_yyyy.tif), split back out into single 1/0 rasters for each disturbance type – this facilitates each pixel only being classified as one disturbance type, but still having individual disturbance rasters
-- FINAL2b_ compile_annual_disturbance_droughtLAG
+- 8b_ compile_annual_disturbance_droughtLAG
   - TIME: 18 min
   - incorporate drought lag and create new disturbance raster (FINAL_3_folder/disturbance_yyyy.tif) 
     - note that this version includes area within the 10 km buffer around the study area, and fires are included on non-usfs land
@@ -240,7 +245,7 @@ Also note that much of this documentation is repeated as comments in the code it
   - note that there are disturbance_yyyy_nobuff files as well that include only cells in the original study area
     - we suspect that most users will use this version, and this was the version that we used for the manuscript
     - note that this layer also excludes any non-usfs land
-- FINAL3_ compile_annual_single_rasters_full_value_range
+- 9_ compile_annual_single_rasters_full_value_range
   - TIME: 45 min
   - once make single disturbance raster, split back out into single 1/0 rasters for each disturbance type
   - save to FINAL_3_folder/single_year/
