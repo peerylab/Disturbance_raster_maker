@@ -1,6 +1,5 @@
-# Anu Kramer
-# 11-16-2024
-
+# Anu Kramer - hakramer@wisc.edu
+# Updated 6-9-2025
 
 # PURPOSE: use projected FACTS polygons to convert to rasters per year, using YrFINAL, and summarize
 #               note that FACTS treatments should be temporally buffered for 2 years before to 1 year after (e.g. if YrFINAL=2015, then buffer it out to 2013-2016)
@@ -9,16 +8,16 @@
 # SPEED: 5 min
 #
 # TYPE THE FOLLOWING INTO CMD:
-#       start c:\Progra~1\ArcGIS\Pro\bin\Python\scripts\propy.bat 6e_FACTS_to_multi_year_raster.py 1985
+#       start c:\Progra~1\ArcGIS\Pro\bin\Python\scripts\propy.bat 6c_FACTS_to_multi_year_raster.py 1985
 #       ...
-#       start c:\Progra~1\ArcGIS\Pro\bin\Python\scripts\propy.bat 6e_FACTS_to_multi_year_raster.py 2022
+#       start c:\Progra~1\ArcGIS\Pro\bin\Python\scripts\propy.bat 6c_FACTS_to_multi_year_raster.py 2022
 
 import arcpy  
 from arcpy import env  
 from arcpy.sa import *
 import sys
 import os
-import functions
+import master_variables
 
 year=sys.argv[1]
 str_year=str(year)
@@ -27,13 +26,13 @@ print(year)
 #################################################
 ############ ADJUST THE VALUES BELOW ############
 #################################################
-base_folder = functions.base_folder_master
-MMI_folder = functions.MMI_folder_master
-coordinate_system = functions.coordinate_system_master
-step1_folder = functions.step1_master
-step2_folder = functions.step2_master
-step4_folder = functions.step4_master
-step6_folder = functions.step6_master
+base_folder = master_variables.base_folder_master
+MMI_folder = master_variables.MMI_folder_master
+coordinate_system = master_variables.coordinate_system_master
+step1_folder = master_variables.step1_master
+step2_folder = master_variables.step2_master
+step4_folder = master_variables.step4_master
+step6_folder = master_variables.step6_master
 
 ###############################################################
 ############ EVERYTHING BELOW SHOULD BE GOOD TO GO ############
