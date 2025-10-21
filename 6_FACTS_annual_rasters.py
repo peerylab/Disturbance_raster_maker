@@ -1,5 +1,5 @@
-# Anu Kramer
-# 11-14-2024
+# Anu Kramer - hakramer@wisc.edu
+# Updated 6-9-2025
 
 # PURPOSE: prepares FACTS data by adding and populating YR_FINAL col, which can be used to date FACTS polygons from here onward
 #               o	Project all FACTS
@@ -8,21 +8,6 @@
 #                      	appropriate activity codes 
 #               o	Calc yr_compl, yr_award, award_yr
 #               o	Make YR_FINAL and assign where can
-#               o	Select all where yr_compl NULL and yr_award/award_yr since 2013?
-#               o	Calc mean annual MMI (MMI_yyyyNODATA_nofire.tif) per year per polygon
-
-
-#               - "YrFINAL" = "YR_COMPL" when "YR_COMPL" > 0
-#               - if "YR_COMPL" = NULL
-#               - if max("YR_AWARD", "AWARD_YR") <= 2013
-#                       - "YrFINAL" = max("YR_AWARD", "AWARD_YR")+2
-#                       - NOTE that the above makes sense because "YrFINAL" will be buffered by -2 to +1 years, and treatment effects will never begin before the award
-#               - if max("YR_AWARD", "AWARD_YR") > 2013
-#                       - calculate mean annual MMI from max("YR_AWARD", "AWARD_YR") to 2023
-#                       - if mean MMI in any of those years > 10,
-#                               - "YrFINAL" = year(max(mean MMI))
-
-
 
 
 # SPEED: 66 min
@@ -34,20 +19,20 @@ import arcpy
 from arcpy import env  
 from arcpy.sa import *
 import os
-import functions
+import master_variables
 
 #################################################
 ############ ADJUST THE VALUES BELOW ############
 #################################################
-base_folder = functions.base_folder_master
-MMI_folder = functions.MMI_folder_master
-tiles = functions.tiles_master
-coordinate_system = functions.coordinate_system_master
-geographic_transform = functions.geographic_transform_master
-FACTS_CommonAttribute_reduceCols = functions.FACTS_CommonAttribute_reduceCols_master
-step1_folder = functions.step1_master
-step5_folder = functions.step5_master
-step6_folder = functions.step6_master
+base_folder = master_variables.base_folder_master
+MMI_folder = master_variables.MMI_folder_master
+tiles = master_variables.tiles_master
+coordinate_system = master_variables.coordinate_system_master
+geographic_transform = master_variables.geographic_transform_master
+FACTS_CommonAttribute_reduceCols = master_variables.FACTS_CommonAttribute_reduceCols_master
+step1_folder = master_variables.step1_master
+step5_folder = master_variables.step5_master
+step6_folder = master_variables.step6_master
 
 ###############################################################
 ############ EVERYTHING BELOW SHOULD BE GOOD TO GO ############
@@ -60,18 +45,12 @@ print("prepping FACTS...")
 
 #PREP DATA
 #select FACTS that overlap study area (makes intersect faster if do it this way...)
-FACTS_hex_overlap = arcpy.management.SelectLayerByLocation(FACTS_CommonAttribute_reduceCols, "WITHIN_A_DISTANCE", base_folder+"ANALYSIS/"+step1_folder+"/hexes_dissolve_10km.shp", '10 Kilometers')
-arcpy.management.CopyFeatures(FACTS_hex_overlap, saveTo+"Actv_CommonAttribute_PL_CA_reducedCols_HEX10km.shp")
-# #intersect FACTS polygons with the study area and save them
-# arcpy.analysis.Intersect(
-#     in_features=base_folder+"ANALYSIS/"+step1_folder+"/hexes_dissolve_10km.shp #;"+saveTo+"Actv_CommonAttribute_PL_CA_reducedCols_HEX_select.shp #",
-#     out_feature_class=saveTo+"Actv_CommonAttribute_PL_CA_reducedCols_HEX10km.shp #",
-#     join_attributes="ALL")
-
+FACTS_study_area_overlap = arcpy.management.SelectLayerByLocation(FACTS_CommonAttribute_reduceCols, "WITHIN_A_DISTANCE", base_folder+"ANALYSIS/"+step1_folder+"/study_area_dissolve_10km.shp", '10 Kilometers')
+arcpy.management.CopyFeatures(FACTS_study_area_overlap, saveTo+"Actv_CommonAttribute_PL_CA_reducedCols_STUDY_AREA10km.shp")
 
 #create orig_FID column that links to old data FID
 arcpy.management.CalculateField(
-    in_table=saveTo+"Actv_CommonAttribute_PL_CA_reducedCols_HEX10km.shp",
+    in_table=saveTo+"Actv_CommonAttribute_PL_CA_reducedCols_STUDY_AREA10km.shp",
     field="orig_FID",
     expression="!FID!",
     expression_type="PYTHON3",
@@ -81,7 +60,7 @@ arcpy.management.CalculateField(
 
 #copy data to new folder (and then delete a bunch of cols)
 FACTS_filepath = saveTo+"Actv_CommonAttribute_PL_CA_reducedCols_minCols.shp"
-arcpy.management.CopyFeatures(saveTo+"Actv_CommonAttribute_PL_CA_reducedCols_HEX10km.shp", FACTS_filepath)
+arcpy.management.CopyFeatures(saveTo+"Actv_CommonAttribute_PL_CA_reducedCols_STUDY_AREA10km.shp", FACTS_filepath)
 
 #delete all but a few columns
 arcpy.management.DeleteField(FACTS_filepath, ["FACTS_ID", "ACTIVITY_C", "ACTIVITY", "DATE_AWARD", "DATE_COMPL", "AWARD_DATE", "OWNERSHIP", "STATE_ABBR", "orig_FID"], "KEEP_FIELDS")
@@ -157,7 +136,6 @@ final_FACTS_filepath = saveTo+"Actv_CommonAttribute_PL_CA_reducedCols_minCols_WG
 
 # Add fields for YR_AWARD, AWARD_YR, YR_COMPL, and YrComposit and populate (28- ## min) - REPEATE FOR EACH:
 def add_and_calc_field (shapefile_path, field_name, field_expression):
-    #arcpy.management.AddField(shapefile_path,field_name,"LONG")
     # assign the field 0 in case it already has data
     arcpy.management.CalculateField(
         in_table=shapefile_path,
@@ -263,7 +241,6 @@ FACTS_polys = arcpy.management.SelectLayerByAttribute(
     #where_clause="YR_COMPL = 0 And YrComposit <= 2013 And YrComposit > 0",
     where_clause="YR_COMPL = 0 And YrComposit > 0",
     invert_where_clause=None)
-
 
 arcpy.management.CalculateField(
     in_table=FACTS_polys,
