@@ -1,6 +1,5 @@
-# data in O:\Sierra-wide GPS Tagging Project\Anu\Helping\Elizabeth\Elizabeth_final_data_prep
-# Anu Kramer
-# 7-30-2024
+# Anu Kramer - hakramer@wisc.edu
+# Updated 6-9-2025
 
 # PURPOSE: add drought lag
 #               see FINAL1 comments for breakdown of codes
@@ -9,27 +8,26 @@
 # 
 #
 # TYPE THE FOLLOWING INTO CMD:
-#       start c:\Progra~1\ArcGIS\Pro\bin\Python\scripts\propy.bat FINAL_2b_compile_annual_disturbance_droughtLAG.py
+#       start c:\Progra~1\ArcGIS\Pro\bin\Python\scripts\propy.bat 8b_compile_annual_disturbance_droughtLAG.py
 
 import arcpy  
 from arcpy import env  
 from arcpy.sa import *
 import sys
 import os
-import functions
+import master_variables
 
 #################################################
 ############ ADJUST THE VALUES BELOW ############
 #################################################
-base_folder = functions.base_folder_master
-coordinate_system = functions.coordinate_system_master
-step4_folder = functions.step4_master # NEW
-step5_folder = functions.step5_master
-FINAL_2_folder = functions.FINAL_2_master
-FINAL_1_folder = functions.FINAL_1_master
-FINAL_3_folder = functions.FINAL_3_master
-MMI_min_year = functions.MMI_min_year_master
-#disturb_path = base_folder+"ANALYSIS/"+FINAL_1_folder+"/"+str_year+"/disturbance_"+str_year+".tif"
+base_folder = master_variables.base_folder_master
+coordinate_system = master_variables.coordinate_system_master
+step4_folder = master_variables.step4_master 
+step5_folder = master_variables.step5_master
+FINAL_2_folder = master_variables.FINAL_2_master
+FINAL_1_folder = master_variables.FINAL_1_master
+FINAL_3_folder = master_variables.FINAL_3_master
+MMI_min_year = master_variables.MMI_min_year_master
 ###############################################################
 ############ EVERYTHING BELOW SHOULD BE GOOD TO GO ############
 ###############################################################
@@ -37,7 +35,7 @@ MMI_min_year = functions.MMI_min_year_master
 single_rasters = base_folder+"ANALYSIS/"+FINAL_2_folder+"/"
 drought_single_rasters = base_folder+"ANALYSIS/"+FINAL_2_folder+"/drought_single_year/"
 final_disturbance = base_folder+"ANALYSIS/"+FINAL_3_folder+"/"
-os.makedirs(final_disturbance, exist_ok=True) # NEW
+os.makedirs(final_disturbance, exist_ok=True) 
 
 for year in range(2002,2023):
     str_year=str(year)
@@ -45,7 +43,7 @@ for year in range(2002,2023):
     disturb_raster = base_folder+"ANALYSIS/"+FINAL_1_folder+"/Disturbance/disturbance_"+str_year+".tif"
     
     drought_rasters = drought_single_rasters+"Drought_"+str_year+".tif"
-    for drought_lag in (1,2,3): # NEW
+    for drought_lag in (1,2,3): 
         if (year-drought_lag) >= MMI_min_year:
             # make list of drought rasters
             drought_rasters = drought_rasters+";"+drought_single_rasters+"Drought_"+str(year-drought_lag)+".tif"
@@ -77,19 +75,30 @@ for year in range(2002,2023):
     # mosaic max of all drought rasters and disturb_raster 
     arcpy.management.MosaicToNewRaster(
         input_rasters=drought_single_rasters+"disturbance_"+str_year+"_droughtLag3.tif;"+single_rasters+"drought_"+str_year+"_droughtLag3_fullMMI.tif",
-        output_location=final_disturbance,
-        raster_dataset_name_with_extension="disturbance_"+str_year+".tif",
+        output_location=drought_single_rasters,
+        raster_dataset_name_with_extension="disturbance_buff"+str_year+".tif",
         coordinate_system_for_the_raster=coordinate_system, pixel_type="16_BIT_UNSIGNED", cellsize=None, number_of_bands=1, mosaic_method="MAXIMUM", mosaic_colormap_mode="FIRST")
     
-    # clip to unbuffered study area
-    print("clipping to unbuffered study area")
-    disturbance_final = Times(final_disturbance+"disturbance_"+str_year+".tif",final_disturbance+"study_area_rast_nobuff.tif")
-    disturbance_final.save(drought_single_rasters+"disturbance_"+str_year+"_nobuff.tif") # NEW
-    # clip to USFS only # NEW
+    # # clip to unbuffered study area
+    # print("clipping to unbuffered study area")
+    # disturbance_final = Times(final_disturbance+"disturbance_buff"+str_year+".tif",final_disturbance+"study_area_rast_nobuff.tif")
+    # disturbance_final.save(drought_single_rasters+"disturbance_"+str_year+"_nobuff.tif") 
+    # # clip to USFS only 
+    # print("clipping to USFS only")
+    # usfs_path = base_folder+"ANALYSIS/"+step4_folder+"/usfs_final_OsNull.tif"
+    # disturbance_final2 = Times(usfs_path,drought_single_rasters+"disturbance_"+str_year+"_nobuff.tif")
+    # disturbance_final2.save(final_disturbance+"disturbance_USFSonly_"+str_year+"_nobuff.tif")
+
+    # clip to USFS only 
     print("clipping to USFS only")
     usfs_path = base_folder+"ANALYSIS/"+step4_folder+"/usfs_final_OsNull.tif"
-    disturbance_final2 = Times(usfs_path,drought_single_rasters+"disturbance_"+str_year+"_nobuff.tif")
-    disturbance_final2.save(final_disturbance+"disturbance_"+str_year+"_nobuff.tif")
+    disturbance_usfs = Times(usfs_path,drought_single_rasters+"disturbance_buff"+str_year+".tif")
+    disturbance_usfs.save(final_disturbance+"disturbance_USFSonly_"+str_year+"_buff.tif")
+    # clip to unbuffered study area
+    print("clipping to unbuffered study area")
+    disturbance_final = Times(final_disturbance+"disturbance_USFSonly_"+str_year+"_buff.tif",final_disturbance+"study_area_rast_nobuff.tif")
+    disturbance_final.save(final_disturbance+"disturbance_USFSonly_"+str_year+"_nobuff.tif") 
+    
     
 print("DONE!")
 
