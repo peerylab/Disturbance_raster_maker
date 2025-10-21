@@ -1,25 +1,24 @@
-# Anu Kramer
-# 11-16-2024
-
+# Anu Kramer - hakramer@wisc.edu
+# Updated 6-9-2025
 
 # PURPOSE: use projected FACTS polygons to convert to rasters per year, using YrFINAL, and summarize
 #               note that FACTS treatments should be temporally buffered for 2 years before to 1 year after (e.g. if YrFINAL=2015, then buffer it out to 2013-2016)
 #               so if making an annual raster for FACTS in 2013, include YrFINAL from year-1 to +2 (e.g. 2012-2015)
-#               essentially prep FACTS rasters to combine with MMI to reclass into whether a given pixel was FACTS&MMI, FACTS only, MMI only, or neither
+#               essentially prep FACTS as rasters, maintaining alignment with MMI (FACTS_ YrFINAL_yyyy.tif)
 # SPEED: 5 min
 #
 # TYPE THE FOLLOWING INTO CMD:
-#       start c:\Progra~1\ArcGIS\Pro\bin\Python\scripts\propy.bat 6d_FACTS_to_raster.py 2001
-#       start c:\Progra~1\ArcGIS\Pro\bin\Python\scripts\propy.bat 6d_FACTS_to_raster.py 1984 ...CAN GO BACK AS FAR AS YOU WANT! ...DO UNTIL 1 YEARS BEFORE WHAT YOU ULTIMATELY WANT
+#       start c:\Progra~1\ArcGIS\Pro\bin\Python\scripts\propy.bat 6b_FACTS_to_raster.py 2001
+#       start c:\Progra~1\ArcGIS\Pro\bin\Python\scripts\propy.bat 6b_FACTS_to_raster.py 1984 ...CAN GO BACK AS FAR AS YOU WANT! ...DO UNTIL 1 YEARS BEFORE WHAT YOU ULTIMATELY WANT
 #       ...
-#       start c:\Progra~1\ArcGIS\Pro\bin\Python\scripts\propy.bat 6d_FACTS_to_raster.py 2024 ...DO UNTIL 2 YEARS PAST WHAT YOU ULTIMATELY WANT
+#       start c:\Progra~1\ArcGIS\Pro\bin\Python\scripts\propy.bat 6b_FACTS_to_raster.py 2024 ...DO UNTIL 2 YEARS PAST WHAT YOU ULTIMATELY WANT
 
 import arcpy  
 from arcpy import env  
 from arcpy.sa import *
 import sys
 import os
-import functions
+import master_variables
 
 year=sys.argv[1]
 str_year=str(year)
@@ -28,13 +27,13 @@ print(year)
 #################################################
 ############ ADJUST THE VALUES BELOW ############
 #################################################
-base_folder = functions.base_folder_master
-MMI_folder = functions.MMI_folder_master
-snap_tile = functions.snap_path_master
-step1_folder = functions.step1_master
-step2_folder = functions.step2_master
-step4_folder = functions.step4_master
-step6_folder = functions.step6_master
+base_folder = master_variables.base_folder_master
+MMI_folder = master_variables.MMI_folder_master
+snap_tile = master_variables.snap_path_master
+step1_folder = master_variables.step1_master
+step2_folder = master_variables.step2_master
+step4_folder = master_variables.step4_master
+step6_folder = master_variables.step6_master
 
 ###############################################################
 ############ EVERYTHING BELOW SHOULD BE GOOD TO GO ############
