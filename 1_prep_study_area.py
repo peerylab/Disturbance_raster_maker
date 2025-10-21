@@ -12,17 +12,17 @@ from arcpy import env
 from arcpy.sa import *
 import sys
 import os
-import master
+import master_variables
 
 #################################################
 ############ ADJUST THE VALUES BELOW ############
 #################################################
-base_folder = master.base_folder_master
-study_area_path = master.study_area_path_master
-coordinate_system = master.coordinate_system_master
-geographic_transform = master.geographic_transform_master
-step1_folder = master.step1_master
-
+base_folder = master_variables.base_folder_master
+study_area_path = master_variables.study_area_path_master
+coordinate_system = master_variables.coordinate_system_master
+geographic_transform = master_variables.geographic_transform_master
+step1_folder = master_variables.step1_master
+print(base_folder)
 ###############################################################
 ############ EVERYTHING BELOW SHOULD BE GOOD TO GO ############
 ###############################################################
