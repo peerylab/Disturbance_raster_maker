@@ -1,6 +1,8 @@
 # Disturbance_raster_maker
 Generate annual 30 m disturbance rasters for fire, fuels management, and drought for CA
 
+NOTE: if you don't want to mess with the code and just want the annual rasters for the Sierra Nevada or Southern California, you can download them at: https://drive.google.com/drive/folders/110AZ_tkbw0g3pmuZ24wAMTsbNpde30Cc?usp=sharing
+
 Updated October 21, 2025  
 Contact: Anu Kramer (hakramer@wisc.edu)
 
