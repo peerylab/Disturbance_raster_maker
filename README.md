@@ -1,11 +1,11 @@
 # Disturbance_raster_maker
 Generate annual 30 m disturbance rasters for fire, fuels management, and drought for CA
 
-Updated June 2, 2025  
+Updated October 21, 2025  
 Contact: Anu Kramer (hakramer@wisc.edu)
 
 ## Purpose
-Generate annual 30 m disturbance rasters from input data (see the output section below for a complete breakdown of disturbance types and corresponding codes). We used this code to generate the data used in our manuscript “Mapping disturbance across California’s rapidly changing forests.”
+Generate annual 30 m disturbance rasters from input data (see the output section below for a complete breakdown of disturbance types and corresponding codes). We used this code to generate the data used in our manuscript “Mapping disturbance across California’s rapidly changing National Forests.”
 
 
 ## Overall format
