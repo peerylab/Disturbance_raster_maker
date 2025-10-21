@@ -1,10 +1,11 @@
-# Anu Kramer
-# 11-14-2024
+# Anu Kramer - hakramer@wisc.edu
+# Updated 6-9-2025
+
 
 # PURPOSE: 
 #               o	Project federal ownership
-#               o	Convert to raster (of 0s and 1s), maintaining alignment with MMI (usfs.tif, non_usfs.tif, federal.tif, non_federal.tif)
-#               o	Multiply by study_area_rast.tif (usfs_final.tif, non_usfs_final.tif, federal_final.tif, non_federal_final.tif)
+#               o	Convert to raster (of 0s and 1s), maintaining alignment with MMI
+#               o	Multiply by study_area_rast.tif (usfs_final.tif, non_usfs_final.tif, usfs_final_OsNull, federal_final.tif, non_federal_final.tif)
 
 # SPEED: 3 min
 #
@@ -16,20 +17,20 @@ from arcpy import env
 from arcpy.sa import *
 import sys
 import os
-import functions
+import master_variables
 
 #################################################
 ############ ADJUST THE VALUES BELOW ############
 #################################################
-base_folder = functions.base_folder_master
-MMI_folder = functions.MMI_folder_master
-tiles = functions.tiles_master
-snap_tile = functions.snap_path_master
-coordinate_system = functions.coordinate_system_master
-geographic_transform = functions.geographic_transform_master
-step1_folder = functions.step1_master
-step2_folder = functions.step2_master
-step4_folder = functions.step4_master
+base_folder = master_variables.base_folder_master
+MMI_folder = master_variables.MMI_folder_master
+tiles = master_variables.tiles_master
+snap_tile = master_variables.snap_path_master
+coordinate_system = master_variables.coordinate_system_master
+geographic_transform = master_variables.geographic_transform_master
+step1_folder = master_variables.step1_master
+step2_folder = master_variables.step2_master
+step4_folder = master_variables.step4_master
 
 ###############################################################
 ############ EVERYTHING BELOW SHOULD BE GOOD TO GO ############
@@ -75,8 +76,6 @@ select_USFS_ownership = arcpy.management.SelectLayerByAttribute(
     where_clause="Agency = 'Forest Service'",
     invert_where_clause=None)
 
-# federal ownership = all of saveTo+"Federal_ownership_WGS.shp"
-
 print("ownership to raster...")
 with arcpy.EnvManager(snapRaster=MMI_raster_path):
     # usfs
@@ -101,7 +100,7 @@ with arcpy.EnvManager(snapRaster=MMI_raster_path):
         reclass_field="Value", remap="0 0 1;1 1 0",
         missing_values="DATA")
     out_raster.save(saveTo+"non_usfs_final.tif")
-    out_raster = arcpy.sa.Reclassify( # NEW
+    out_raster = arcpy.sa.Reclassify(
         in_raster=saveTo+"usfs_final.tif",
         reclass_field="Value", remap="0 0 NODATA",
         missing_values="DATA")
