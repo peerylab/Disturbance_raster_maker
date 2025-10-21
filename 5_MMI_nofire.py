@@ -1,7 +1,9 @@
-# Anu Kramer
-# 11-14-2024
+# Anu Kramer - hakramer@wisc.edu
+# Updated 6-9-2025
 
 # PURPOSE: 
+#               o	Mosaic MMI tiles together, snapping to the chosen snap tile and eliminating the MMI value for any pixel that burned that year or
+#                           within the fire longevity number of years previously (e.g. any areas where canopy loss is likely due to direct or indirect fire effects)
 #               o	Mosaic (MAXIMUM)
 #                  	MMI_yyyy_0s_study_area.tif 
 #                  	fire_allsev_yyyy-longevitytoyyyy_final.tif * 200
@@ -22,7 +24,7 @@ from arcpy import env
 from arcpy.sa import *
 import sys
 import os
-import functions
+import master_variables
 
 year=sys.argv[1]
 str_year=str(year)
@@ -32,16 +34,14 @@ print(year)
 #################################################
 ############ ADJUST THE VALUES BELOW ############
 #################################################
-base_folder = functions.base_folder_master
-fire_longevity = functions.fire_longevity_master
-# treat_threshold = functions.treat_threshold_master
-# drought_threshold = functions.drought_threshold_master
-snap_tile = functions.snap_path_master
-coordinate_system = functions.coordinate_system_master
-step2_folder = functions.step2_master
-step3_folder = functions.step3_master
-step4_folder = functions.step4_master
-step5_folder = functions.step5_master
+base_folder = master_variables.base_folder_master
+fire_longevity = master_variables.fire_longevity_master
+snap_tile = master_variables.snap_path_master
+coordinate_system = master_variables.coordinate_system_master
+step2_folder = master_variables.step2_master
+step3_folder = master_variables.step3_master
+step4_folder = master_variables.step4_master
+step5_folder = master_variables.step5_master
 
 ###############################################################
 ############ EVERYTHING BELOW SHOULD BE GOOD TO GO ############
@@ -96,11 +96,5 @@ out_raster = arcpy.sa.Reclassify(
         missing_values="DATA")
 out_raster.save(saveTo+"MMI_"+str(year)+"_0s_nofireUSFS_drought10.tif")
 
-# # reclass a dataset where burned is 0, 0-treat_threshold -> 1; treat_threshold-100 -> 2; MMI that was NA -> 1
-# out_raster = arcpy.sa.Reclassify(
-#         in_raster=saveTo+"max_MMI_FIRE_OWNER_"+str(year)+".tif",
-#         reclass_field="Value", remap="0 "+str(treat_threshold)+" 1; "+str(treat_threshold)+" 100 2; 150 150 1; 200 200 0",
-#         missing_values="DATA")
-# out_raster.save(saveTo+"MMI_"+str(year)+"_0s_nofireUSFS_treat_under1_over2.tif")
 
 print("DONE!")
