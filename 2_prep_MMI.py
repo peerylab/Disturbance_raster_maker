@@ -8,7 +8,7 @@
 #               o	reclass MMI 0-10 -> 0; 101-200-> 0; NODATA -> 0 (MMI_yyyy0s.tif)
 #               o	MMI_ yyyy0s.tif * study_area_rast.tif (MMI_yyyy0s_study_area.tif)
 
-# SPEED: 5 min
+# SPEED: 5 min - Be sure to run the MMI years first, then run any pre-MMI years
 #
 # TYPE THE FOLLOWING INTO CMD:
 #       start c:\Progra~1\ArcGIS\Pro\bin\Python\scripts\propy.bat 2_prep_MMI.py 2002
@@ -24,7 +24,7 @@ from arcpy import env
 from arcpy.sa import *
 import sys
 import os
-import master
+import master_variables
 
 year=sys.argv[1]
 str_year=str(year)
@@ -34,15 +34,14 @@ print(year)
 #################################################
 ############ ADJUST THE VALUES BELOW ############
 #################################################
-base_folder = master.base_folder_master
-MMI_folder = master.MMI_folder_master
-tiles = master.tiles_master
-snap_tile = master.snap_path_master
-coordinate_system = master.coordinate_system_master
-geographic_transform = master.geographic_transform_master
-#extract_by_mask_coordinates = master.extract_by_mask_coordinates_master
-step1_folder = master.step1_master
-step2_folder = master.step2_master
+base_folder = master_variables.base_folder_master
+MMI_folder = master_variables.MMI_folder_master
+tiles = master_variables.tiles_master
+snap_tile = master_variables.snap_path_master
+coordinate_system = master_variables.coordinate_system_master
+geographic_transform = master_variables.geographic_transform_master
+step1_folder = master_variables.step1_master
+step2_folder = master_variables.step2_master
 
 study_area_path = base_folder+"ANALYSIS/"+step1_folder+"/"+"study_area_dissolve_10km.shp"
 ###############################################################
@@ -58,7 +57,7 @@ arcpy.management.CopyFeatures(study_area_path, saveTo+"study_area_dissolve_10km.
 study_area_path=saveTo+"study_area_dissolve_10km.shp"
 
 # project MMI tiles (if there's MMI for that year)
-if year >= master.MMI_min_year_master:
+if year >= master_variables.MMI_min_year_master:
     for tile in tiles:
         print(tile)
         if tile == tiles[0]:
@@ -88,39 +87,19 @@ if year >= master.MMI_min_year_master:
         arcpy.management.MosaicToNewRaster(
             input_rasters=input_rasters_string,
             output_location=saveTo,
-            raster_dataset_name_with_extension="MMI_mosaic_"+str_year+"_WGS_intermediate.tif",
-            #raster_dataset_name_with_extension="MMI_mosaic_"+str_year+"_WGS_intermediate.tif",
+            raster_dataset_name_with_extension="MMI_mosaic_"+str_year+"_WGS.tif",
             coordinate_system_for_the_raster=coordinate_system, pixel_type="8_BIT_UNSIGNED", cellsize=None, number_of_bands=1, mosaic_method="MAXIMUM", mosaic_colormap_mode="FIRST")
-    # need to run this to get cells aligned with habitat raster
-    with arcpy.EnvManager(cellSizeProjectionMethod="PRESERVE_RESOLUTION", snapRaster=MMI_raster_path, cellSize=MMI_raster_path):
-        out_raster = arcpy.sa.ExtractByMask(
-            in_raster=saveTo+"MMI_mosaic_"+str_year+"_WGS_intermediate.tif",
-            in_mask_data=MMI_raster_path,
-            extraction_area="INSIDE",
-            analysis_extent=extract_by_mask_coordinates+' GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]]'
-        )
-        out_raster.save(saveTo+"MMI_mosaic_"+str_year+"_WGS.tif")
     
     print("making study area raster")
     with arcpy.EnvManager(snapRaster=MMI_raster_path):  
         arcpy.conversion.PolygonToRaster(
             in_features=study_area_path,
             value_field="ones",
-            out_rasterdataset=saveTo+"study_area_rast_intermediate.tif",
-            #out_rasterdataset=saveTo+"study_area_rast_intermediate.tif",
+            out_rasterdataset=saveTo+"study_area_rast.tif",
             cell_assignment="CELL_CENTER",
             priority_field="NONE",
             cellsize=MMI_raster_path,
             build_rat="BUILD")     
-    # need to run this to get cells aligned with habitat raster
-    with arcpy.EnvManager(cellSizeProjectionMethod="PRESERVE_RESOLUTION", snapRaster=MMI_raster_path, cellSize=MMI_raster_path):
-        out_raster = arcpy.sa.ExtractByMask(
-            in_raster=saveTo+"study_area_rast_intermediate.tif",
-            in_mask_data=MMI_raster_path,
-            extraction_area="INSIDE",
-            analysis_extent=extract_by_mask_coordinates+' GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]]'
-        )
-        out_raster.save(saveTo+"study_area_rast.tif")
     
     print("clipping to study area")
     MMI_study_area = Times(saveTo+"MMI_mosaic_"+str_year+"_WGS.tif",saveTo+"study_area_rast.tif")
@@ -132,20 +111,10 @@ else:
         arcpy.conversion.PolygonToRaster(
             in_features=study_area_path,
             value_field="ones",
-            out_rasterdataset=saveTo+"study_area_rast_intermediate.tif",
-            #out_rasterdataset=saveTo+"study_area_rast_intermediate.tif",
+            out_rasterdataset=saveTo+"study_area_rast.tif",
             cell_assignment="CELL_CENTER",
             priority_field="NONE",
             cellsize=MMI_raster_path,
             build_rat="BUILD")
-    # need to run this to get cells aligned with habitat raster
-    with arcpy.EnvManager(cellSizeProjectionMethod="PRESERVE_RESOLUTION", snapRaster=MMI_raster_path, cellSize=MMI_raster_path):
-        out_raster = arcpy.sa.ExtractByMask(
-            in_raster=saveTo+"study_area_rast_intermediate.tif",
-            in_mask_data=MMI_raster_path,
-            extraction_area="INSIDE",
-            analysis_extent=extract_by_mask_coordinates+' GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]]'
-        )
-        out_raster.save(saveTo+"study_area_rast.tif")
 
 print("DONE!")
