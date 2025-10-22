@@ -70,11 +70,11 @@ Any variable that ranges across multiple values is indicated by "*", where the s
 ## Prep to run
 - Ensure that ArcGIS Pro is installed (the python code runs functions in ArcGIS without opening any project, but requires the program and license(s)
 - Create a new folder that will house all code, data, and output for this run
-  - Copy in the “CODE” folder
+  - Create a folder named “CODE” and copy in all code
   - Create a “DATA” folder and copy in:
     - MMI files
     - CBI rasters 
-      - projected in NAD 1983 California (Teale) Albers (Meters); with filenames that follow "cbi_cat_yyyy.tif" where yyyy is the year
+      - projected in NAD 1983 California (Teale) Albers (Meters); with filenames that follow "cbi_cat_yyyy.tif" where yyyy is the year and the CBI is categorized by severity (0=unburned, 1=low, 2=moderate, 3=high severity)
     - fire perimeter shapefiles
       - projected in NAD 1983 California (Teale) Albers (Meters)
       - Download from FRAP https://frap.fire.ca.gov/mapping/gis-data/
@@ -92,7 +92,7 @@ Any variable that ranges across multiple values is indicated by "*", where the s
       - select polygons that intersect study area within 10km buffer
       - export as shapefile: "Actv_CommonAttribute_PL_Region05_ReducedCols_study_area_10km.shp"
       - delete AGAIN: all but a few columns (use delete field tool with method = keep field): "FACTS_ID", "ACTIVITY_C", "ACTIVITY", "DATE_AWARD", "DATE_COMPL", "AWARD_DATE", "OWNERSHIP", "STATE_ABBR"
-- Open “master.py” and update the filepaths to the base data:
+- Open “master_variables.py” and update the filepaths to the base data:
   - fire_longevity_master
     - the number of years after a fire that “fire” should be considered a disturbance (e.g. to include secondary or lagged fire effects)
     - we used a value of 3 in the manuscript (where disturbances for 2020 would include fires from 2017-2020)
@@ -138,10 +138,11 @@ Any variable that ranges across multiple values is indicated by "*", where the s
 ## Set up your command prompt in windows
 - Type “cmd” into your windows search bar and open “command prompt”
 - set your working directory as the path to your code folder e.g. "cd …\test_run\CODE"
-- use “Command_line_guide.xlsx” to guide you through the commands to enter for each code step
+- copy in the sample code lines listed in the comments at the top of each code step (e.g. for 1_prep_study_area.py "start c:\Progra~1\ArcGIS\Pro\bin\Python\scripts\propy.bat 1_prep_study_area.py" on line 8)
 - Some steps include a single code run, and others are most efficient when run in parallel (one run for each year)
-  - The prompts in “Command_line_guide.xlsx” are designed for parallel runs, but you can remove the “start” command if you don’t want to use parallel processing
-  - Importantly, some of the steps may overwhelm your computer’s capabilities (or the number of concurrent ArcGIS licenses you have access to) – please ensure that all runs complete without errors before moving to the next code step
+  - You will have to modify the code for the parallel runs to match the range of years that you want to run and to generate the calls for each year. Excel makes this process easy
+  - The prompts in the code are designed for parallel runs, but you can remove the “start” command if you don’t want to use parallel processing
+  - Importantly, some of the steps may overwhelm your computer’s capabilities (or the number of concurrent ArcGIS licenses you have access to) and may need to be run in multiple smaller batches if using parallel processing – please ensure that all runs complete without errors before moving to the next code step
   - Note that some steps will take longer than others, and the runtime depends on the geographical area you are processing and your computer’s capabilities
   - If you are getting unexplainable errors, try running fewer parallel processes or find a computer with faster processing speed and more RAM
   - It can also help to open your task manager and monitor the CPU and memory use when running this code
@@ -228,24 +229,19 @@ Also note that much of this documentation is repeated as comments in the code it
     - post-LowSev fire salvage = 1500 (note this is in USFS only, associated with codes 3132, 4231, and 4232)
     - post-LowSev fire treat = 1300 (note this is in USFS only)
     - recently burned at low severity (1-3 years post-fire) = 1000
-    - non-USFS = 2000
-    - 
+    - non-USFS = 999
     - salvage without fire = 500-600, shouldn't be much in this category, but need to investigate!...likely some before fire and some after fire, but should be fire sometime nearby!
     - fuel management = 300-400, where 300 corresponds to an MMI value of 0 within a treatment polygon and 400 corresponds to an MMI value of 100
     - drought = 100-200, where 100 corresponds to an MMI value of 0 where there is no fire or fuel management and 200 corresponds to an MMI value of 100
     - nothing = 0
 - 8_compile_annual_single_rasters
   - TIME: 3 min
-  - once make single disturbance raster (FINAL_1_folder/Disturbance/disturbance_yyyy.tif), split back out into single 1/0 rasters for each disturbance type – this facilitates each pixel only being classified as one disturbance type, but still having individual disturbance rasters
+  - once make single disturbance raster (7_compile_annual_disturbance/Disturbance/disturbance_yyyy.tif), split back out into single 1/0 rasters for each disturbance type – this facilitates each pixel only being classified as one disturbance type, but still having individual disturbance rasters
 - 8b_ compile_annual_disturbance_droughtLAG
   - TIME: 18 min
-  - incorporate drought lag and create new disturbance raster (FINAL_3_folder/disturbance_yyyy.tif) 
-    - note that this version includes area within the 10 km buffer around the study area, and fires are included on non-usfs land
-    - while some users may prefer this version, see the following bullet for the nobuff version
-  - note that there are disturbance_yyyy_nobuff files as well that include only cells in the original study area
-    - we suspect that most users will use this version, and this was the version that we used for the manuscript
-    - note that this layer also excludes any non-usfs land
+  - incorporate drought lag and create new disturbance rasters (9_final_disturbance_rasters/disturbance_yyyy_nobuff.tif) 
+    - note that this version includes only raster cells in the original study area (and only on usfs-owned land)
 - 9_ compile_annual_single_rasters_full_value_range
   - TIME: 45 min
-  - once make single disturbance raster, split back out into single 1/0 rasters for each disturbance type
-  - save to FINAL_3_folder/single_year/
+  - once update all the disturbance raster to include drought lag, split back out into single 1/0 rasters for each disturbance type annually
+  - save to 9_final_disturbance_rasters/single_year/
