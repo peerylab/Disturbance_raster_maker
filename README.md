@@ -196,7 +196,7 @@ Also note that much of this documentation is repeated as comments in the code it
     - save as MMI _0s_nofireUSFS_drought10.tif
     - use this to classify drought/not drought in a given year in prep for calculating drought lag
 - 6_FACTS_annual_rasters
-  - TIME: 66 min 
+  - TIME: 5 min 
   - Clean and prep FACTS into fuel management polygons with a YR_FINAL col that can be used to date FACTS polygons from here onward
   - Project all FACTS
   - Select FACTS: (Actv_CommonAttribute_PL_CA_reducedCols_minCols_Teale.shp)
@@ -215,7 +215,7 @@ Also note that much of this documentation is repeated as comments in the code it
     - so if making an annual raster for FACTS in 2013, include YrFINAL from year-1 to +2 (e.g. 2012-2015)
   - Remove non_usfs (usfs_final.tif * multi-year_ YrFINAL_yyyy.tif = multi-year_ YrFINAL_yyyy_usfs.tif)
 - 7_compile_annual_disturbance
-  - TIME: 3 min
+  - TIME: 3 hours
   - Mosaic (MAXIMUM) = disturbance_yyyy.tif
     - hiSev fire = 5000
     - mod sev fire = 4500
