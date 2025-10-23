@@ -4,7 +4,7 @@
 # PURPOSE: once make single disturbance raster, split back out into single 1/0 rasters for each disturbance type
 #               see FINAL1 comments for breakdown of codes
 
-# SPEED: 45 min
+# SPEED: 90 MIN
 # 
 #
 # TYPE THE FOLLOWING INTO CMD:
@@ -138,4 +138,5 @@ for year in range(1985+fire_longevity,2023):
         out_raster.save(single_rasters+"NoDisturbance_"+str_year+".tif")
 
 print("DONE!")
+
 
