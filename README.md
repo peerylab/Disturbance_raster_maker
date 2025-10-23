@@ -215,7 +215,7 @@ Also note that much of this documentation is repeated as comments in the code it
     - so if making an annual raster for FACTS in 2013, include YrFINAL from year-1 to +2 (e.g. 2012-2015)
   - Remove non_usfs (usfs_final.tif * multi-year_ YrFINAL_yyyy.tif = multi-year_ YrFINAL_yyyy_usfs.tif)
 - 7_compile_annual_disturbance
-  - TIME: 3 hours
+  - TIME: 2.5 hours
   - Mosaic (MAXIMUM) = disturbance_yyyy.tif
     - hiSev fire = 5000
     - mod sev fire = 4500
@@ -238,10 +238,10 @@ Also note that much of this documentation is repeated as comments in the code it
   - TIME: 3 min
   - once make single disturbance raster (7_compile_annual_disturbance/Disturbance/disturbance_yyyy.tif), split back out into single 1/0 rasters for each disturbance type – this facilitates each pixel only being classified as one disturbance type, but still having individual disturbance rasters
 - 8b_ compile_annual_disturbance_droughtLAG
-  - TIME: 18 min
+  - TIME: 25 min
   - incorporate drought lag and create new disturbance rasters (9_final_disturbance_rasters/disturbance_yyyy_nobuff.tif) 
     - note that this version includes only raster cells in the original study area (and only on usfs-owned land)
 - 9_ compile_annual_single_rasters_full_value_range
-  - TIME: 45 min
+  - TIME: 90 min
   - once update all the disturbance raster to include drought lag, split back out into single 1/0 rasters for each disturbance type annually
   - save to 9_final_disturbance_rasters/single_year/
