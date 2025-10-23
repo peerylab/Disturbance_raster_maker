@@ -26,7 +26,7 @@
 #                   drought = 100-200, where 100 corresponds to an MMI value of 0 where there is no fire or fuel management and 200 corresponds to an MMI value of 100
 #                   nothing = 0
 #
-# SPEED: 41 min (~8 min each x 38 years = 5 hours!?)...if split into 10-year chuncks and run in paralell, can do in 1.3 hours...
+# SPEED: 2.5 hours
 # 
 #
 # TYPE THE FOLLOWING INTO CMD:
@@ -241,3 +241,4 @@ for year in range(1985+fire_longevity,2023):
         coordinate_system_for_the_raster=coordinate_system, pixel_type="16_BIT_UNSIGNED", cellsize=None, number_of_bands=1, mosaic_method="MAXIMUM", mosaic_colormap_mode="FIRST")
 
 print("DONE!")
+
