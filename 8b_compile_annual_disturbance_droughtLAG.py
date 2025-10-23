@@ -4,7 +4,7 @@
 # PURPOSE: add drought lag
 #               see FINAL1 comments for breakdown of codes
 
-# SPEED: 18 min (~1 min per year x 22 years = ) 624-642
+# SPEED: 25 MIN
 # 
 #
 # TYPE THE FOLLOWING INTO CMD:
@@ -101,4 +101,5 @@ for year in range(2002,2023):
     
     
 print("DONE!")
+
 
